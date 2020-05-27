@@ -27,7 +27,10 @@ private:
     FiguresWindow* figuresWindow;
     InitialDataWindow* initialDataWindow;
 
+    Euler1dState* numericalSolution;
+
     EulerRiemannProblem exactSolution;
+    double currentLayer;
     double currentTime;
     QLabel* currentTimeLabel;
     Mesh mesh;

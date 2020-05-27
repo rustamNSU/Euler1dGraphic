@@ -19,9 +19,12 @@ Q_OBJECT // Macro for class which include own signals and slots
 public:
     explicit FiguresWindow(QWidget* parent = nullptr);
 
-    void drawData(double time, const QList<QVector<QPointF>>& data);
+    void drawData(double time,
+                  const QList<QVector<QPointF>>& exact_data,
+                  const QList<QVector<QPointF>>& numerical_data
+    );
 
-    ~FiguresWindow() noexcept ;
+    ~FiguresWindow() noexcept;
 
 private:
     QList<QChart*> charts;
@@ -32,7 +35,7 @@ private:
     QSize sizeHint() const override;
 };
 
-void draw_series(QChart* chart, QLineSeries* series, const QString& time_title);
+void draw_series(QChart* chart, QLineSeries* series, const QString &time_title);
 
 
 #endif //EULER1DPLOT_FIGURESWINDOW_H

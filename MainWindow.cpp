@@ -49,30 +49,65 @@ MainWindow::MainWindow(QWidget* parent) :
     );
 
     exactSolution.DefineRiemannWaveType();
-    mesh.SetMesh(initialDataWindow->getInitialData().nodesNumber,
-                 initialDataWindow->getInitialData().left,
-                 initialDataWindow->getInitialData().right
+
+    numericalSolution = new Euler1dState(initialDataWindow->getInitialData().left,
+                                         initialDataWindow->getInitialData().right,
+                                         initialDataWindow->getInitialData().nodesNumber
     );
 
+    // initial condition
+    auto createStep = [](double left_value, double right_value)
+    {
+        auto result_lambda = [left_value, right_value](double x)
+        {
+            if (x < 0.0) {return left_value; }
+            else {return right_value; }
+        };
+        return result_lambda;
+    };
+
+    numericalSolution->SetInitialValues(
+            createStep(initialDataWindow->getInitialData().ul, initialDataWindow->getInitialData().ur),
+            createStep(initialDataWindow->getInitialData().rhol, initialDataWindow->getInitialData().rhor),
+            createStep(initialDataWindow->getInitialData().pl, initialDataWindow->getInitialData().pr)
+            );
+
+    numericalSolution->Calculate(RoeSolver, initialDataWindow->getInitialData().endTime);
+    mesh = numericalSolution->GetMesh();
+
+    currentLayer = 0;
 }
 
 void MainWindow::draw()
 {
-    currentTime += 0.1;
-    currentTimeLabel->setNum(currentTime);
+    double current_time = numericalSolution->GetLayerTime(currentLayer);
+    currentTimeLabel->setNum(current_time);
+    currentTime = current_time;
 
     QVector<QPointF> density;
     QVector<QPointF> pressure;
     QVector<QPointF> velocity;
+
+    QVector<QPointF> numerical_density;
+    QVector<QPointF> numerical_pressure;
+    QVector<QPointF> numerical_velocity;
     for (int i = 0; i < mesh.GetSize(); ++i)
     {
-        auto euler_variable = exactSolution(mesh[i], currentTime);
+        auto euler_variable = exactSolution(mesh[i], current_time);
         density.push_back(QPointF(euler_variable.x, euler_variable.rho));
         pressure.push_back(QPointF(euler_variable.x, euler_variable.pressure));
         velocity.push_back(QPointF(euler_variable.x, euler_variable.u));
+
+        auto elv = numericalSolution->GetEulerVariables(currentLayer, i);
+        numerical_density.push_back(QPointF(elv.x, elv.rho));
+        numerical_pressure.push_back(QPointF(elv.x, elv.pressure));
+        numerical_velocity.push_back(QPointF(elv.x, elv.u));
     }
 
-    figuresWindow->drawData(currentTime, QList{density, pressure, velocity});
+    figuresWindow->drawData(current_time,
+                            QList{density, pressure, velocity},
+                            QList{numerical_density, numerical_pressure, numerical_velocity});
+    ++currentLayer;
 }
 
 QSize MainWindow::sizeHint() const

@@ -11,9 +11,9 @@
 #include <QString>
 
 struct InitialData {
-    qreal left = -1.0;
-    qreal right = 1.0;
-    int nodesNumber = 50;
+    qreal left = -2.0;
+    qreal right = 2.0;
+    int nodesNumber = 500;
     qreal gamma = 1.4;
     qreal endTime = 1.0;
 

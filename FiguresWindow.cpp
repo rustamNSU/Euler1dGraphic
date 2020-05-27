@@ -46,24 +46,38 @@ FiguresWindow::FiguresWindow(QWidget *parent) :
 }
 
 
-void FiguresWindow::drawData(double time, const QList<QVector<QPointF>>& data)
+void FiguresWindow::drawData(double time,
+                             const QList<QVector<QPointF>>& exact_data,
+                             const QList<QVector<QPointF>>& numerical_data)
 {
     int index = 0;
     for (auto chart : charts)
     {
-        if (index >= data.size()){
+        if (index >= exact_data.size()){
             break;
         }
+
         chart->removeAllSeries();
-        QLineSeries* series = new QLineSeries;
-        for (const auto& point : data.at(index))
+        QLineSeries* exact_series = new QLineSeries;
+        QLineSeries* numerical_series = new QLineSeries;
+        for (const auto& point : exact_data.at(index))
         {
-            series->append(point);
+            exact_series->append(point);
+        }
+        for (const auto& point : numerical_data.at(index))
+        {
+            numerical_series->append(point);
         }
         auto time_title = chartsTitle.at(index) +
                           QString(", t = ") +
                           QString::number(time);
-        draw_series(chart, series, time_title);
+        chart->setTitle(time_title);
+        chart->addSeries(exact_series);
+        chart->addSeries(numerical_series);
+        exact_series->setName(QString("exact ") + chartsTitle.at(index));
+        numerical_series->setName(QString("numerical ") + chartsTitle.at(index));
+
+        chart->createDefaultAxes();
 
         ++index;
     }
@@ -73,15 +87,6 @@ void FiguresWindow::drawData(double time, const QList<QVector<QPointF>>& data)
 FiguresWindow::~FiguresWindow() noexcept
 {
 
-}
-
-
-void draw_series(QChart* chart, QLineSeries* series, const QString& time_title)
-{
-    chart->addSeries(series);
-    chart->legend()->markers(series)[0]->setVisible(false);
-    chart->setTitle(time_title);
-    chart->createDefaultAxes();
 }
 
 QSize FiguresWindow::sizeHint() const
