@@ -1,0 +1,3 @@
+[submodule "GodunovsMethod"]
+	path = GodunovsMethod
+	url = https://github.com/rustamNSU/GodunovsMethod.git
