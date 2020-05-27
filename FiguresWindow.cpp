@@ -86,7 +86,14 @@ void FiguresWindow::drawData(double time,
 
 FiguresWindow::~FiguresWindow() noexcept
 {
-
+    for (auto& chart : charts)
+    {
+        delete chart;
+    }
+    for (auto& chart_view : chartsView)
+    {
+        delete chart_view;
+    }
 }
 
 QSize FiguresWindow::sizeHint() const

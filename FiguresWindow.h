@@ -29,7 +29,7 @@ public:
 private:
     QList<QChart*> charts;
     QList<QChartView*> chartsView;
-    QList<QString> chartsTitle = {"density", "pressure", "velocity"};
+    QList<QString> chartsTitle = {"density", "pressure", "velocity", "energy"};
 
 private:
     QSize sizeHint() const override;

@@ -20,21 +20,31 @@ public:
 
     QSize sizeHint() const override;
 
+    bool isOutTime();
+
 public slots:
-    void draw();
+
+    /**
+     * Return bool type:
+     *   true - correct current layer number
+     *   false - didn't plot graphics (out time boundary)
+     */
+    bool draw();
+
+    void calculate();
+    void next_layer();
+    void previous_layer();
 
 private:
     FiguresWindow* figuresWindow;
     InitialDataWindow* initialDataWindow;
 
-    Euler1dState* numericalSolution;
+    Euler1dState* numericalSolution = nullptr;
+    EulerRiemannProblem* exactSolution = nullptr;
 
-    EulerRiemannProblem exactSolution;
-    double currentLayer;
+    bool isCalculated = false;
+    int currentLayer = 0;
     double currentTime;
     QLabel* currentTimeLabel;
     Mesh mesh;
-
 };
-
-void transform_QLineEdit_to_qreal(QLineEdit* edit, qreal* item, qreal default_value = 0.0);

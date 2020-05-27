@@ -36,6 +36,8 @@ public:
 
     const InitialData& getInitialData() const;
 
+    void updateInitialData();
+
     ~InitialDataWindow() noexcept ;
 
 private:
@@ -56,6 +58,10 @@ private:
     QLineEdit* line_gamma;
     QLineEdit* line_endTime;
 };
+
+
+void transform_QLineEdit_to_qreal(QLineEdit* edit, qreal& item, qreal default_value = 0.0);
+void transform_QLineEdit_to_int(QLineEdit* edit, int& item, int default_value = 0);
 
 
 #endif //EULER1DPLOT_INITIALDATA_H

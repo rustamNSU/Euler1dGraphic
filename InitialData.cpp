@@ -93,6 +93,7 @@ InitialDataWindow::InitialDataWindow(QWidget* parent) :
     main_vbox->addLayout(parameters, 1);
 
     QValidator* double_valid = new QDoubleValidator();
+    double_valid->setLocale(QLocale(QLocale::English));
     line_p1->setValidator(double_valid);
     line_p2->setValidator(double_valid);
     line_u1->setValidator(double_valid);
@@ -128,4 +129,47 @@ const InitialData& InitialDataWindow::getInitialData() const
     return initialData;
 }
 
+void InitialDataWindow::updateInitialData()
+{
+    transform_QLineEdit_to_qreal(line_p1, initialData.pl, initialData.pl);
+    transform_QLineEdit_to_qreal(line_p2, initialData.pr, initialData.pr);
+    transform_QLineEdit_to_qreal(line_u1, initialData.ul, initialData.ul);
+    transform_QLineEdit_to_qreal(line_u2, initialData.ur, initialData.ur);
+    transform_QLineEdit_to_qreal(line_rho1, initialData.rhol, initialData.rhol);
+    transform_QLineEdit_to_qreal(line_rho2, initialData.rhor, initialData.rhor);
+
+    transform_QLineEdit_to_qreal(line_Xmin, initialData.left, initialData.left);
+    transform_QLineEdit_to_qreal(line_Xmax, initialData.right, initialData.right);
+    transform_QLineEdit_to_qreal(line_gamma, initialData.gamma, initialData.gamma);
+    transform_QLineEdit_to_qreal(line_endTime, initialData.endTime, initialData.pl);
+
+    transform_QLineEdit_to_int(line_N, initialData.nodesNumber, initialData.nodesNumber);
+}
+
 InitialDataWindow::~InitialDataWindow() noexcept {}
+
+void transform_QLineEdit_to_qreal(QLineEdit* edit, qreal& item, qreal default_value)
+{
+    if (edit->text().isEmpty())
+    {
+        item = default_value;
+        edit->setText(QString::number(default_value));
+    }
+    else
+    {
+        item = edit->text().toDouble();
+    }
+}
+
+void transform_QLineEdit_to_int(QLineEdit* edit, int& item, int default_value)
+{
+    if (edit->text().isEmpty())
+    {
+        item = default_value;
+        edit->setText(QString::number(default_value));
+    }
+    else
+    {
+        item = edit->text().toInt();
+    }
+}
